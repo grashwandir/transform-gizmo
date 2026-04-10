@@ -492,8 +492,10 @@ fn update_gizmos(
     let gizmo_interaction = GizmoInteraction {
         cursor_pos: (cursor_pos.x, cursor_pos.y),
         hovered,
-        drag_started: drag_started.read().len() > 0,
-        dragging: dragging.read().len() > 0,
+        // Use .count() instead of .len() to consume the iterator and advance the cursor.
+        // .len() (ExactSizeIterator) leaves messages unread, causing drag to get stuck.
+        drag_started: drag_started.read().count() > 0,
+        dragging: dragging.read().count() > 0,
     };
 
     let mut target_entities: Vec<Entity> = vec![];
