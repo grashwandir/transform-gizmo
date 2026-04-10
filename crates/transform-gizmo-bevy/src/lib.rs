@@ -36,6 +36,7 @@ use bevy_input::prelude::*;
 use bevy_math::{DQuat, DVec3, Vec2};
 use bevy_picking::hover::HoverMap;
 use bevy_platform::collections::HashMap;
+use bevy_render::extract_component::{ExtractComponent, ExtractComponentPlugin};
 use bevy_transform::prelude::*;
 use bevy_window::{PrimaryWindow, Window};
 use mouse_interact::MouseGizmoInteractionPlugin;
@@ -74,6 +75,7 @@ impl Plugin for TransformGizmoPlugin {
             .init_resource::<GizmoStorage>()
             .add_message::<GizmoDragStarted>()
             .add_message::<GizmoDragging>()
+            .add_plugins(ExtractComponentPlugin::<GizmoCamera>::default())
             .add_plugins(TransformGizmoRenderPlugin)
             .add_systems(
                 Last,
@@ -230,8 +232,14 @@ impl GizmoTarget {
     }
 }
 
-/// Marker used to specify which camera to use for gizmos.
-#[derive(Component)]
+/// Marker used to specify which cameras to render the gizmo into.
+///
+/// Only views whose camera carries this marker receive gizmo draw calls.
+/// Cameras without it — e.g. a game camera in an embedded editor — stay
+/// free of the gizmo overlay even when they render the same scene, fixing
+/// the "gizmo appears in every 3D view" behaviour tracked upstream in
+/// <https://github.com/urholaukkarinen/transform-gizmo/issues/91>.
+#[derive(Component, Clone, Copy, Default, ExtractComponent)]
 pub struct GizmoCamera;
 
 #[derive(Resource, Default)]

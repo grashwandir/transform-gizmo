@@ -333,18 +333,26 @@ fn queue_transform_gizmos(
     msaa_q: Query<Option<&Msaa>, With<GizmoCamera>>,
     transform_gizmos: Query<(Entity, &GizmoDrawDataHandle)>,
     transform_gizmo_assets: Res<RenderAssets<GizmoBuffers>>,
-    mut views: Query<(
-        Entity,
-        &ExtractedView,
-        Option<&Msaa>,
-        Option<&RenderLayers>,
+    mut views: Query<
         (
-            Has<NormalPrepass>,
-            Has<DepthPrepass>,
-            Has<MotionVectorPrepass>,
-            Has<DeferredPrepass>,
+            Entity,
+            &ExtractedView,
+            Option<&Msaa>,
+            Option<&RenderLayers>,
+            (
+                Has<NormalPrepass>,
+                Has<DepthPrepass>,
+                Has<MotionVectorPrepass>,
+                Has<DeferredPrepass>,
+            ),
         ),
-    )>,
+        // Only enqueue gizmo draws on views whose camera carries the
+        // `GizmoCamera` marker. Without this filter, the gizmo geometry
+        // is drawn into every 3D view's Transparent3d phase, which causes
+        // it to appear on unrelated cameras (e.g. a game camera in an
+        // embedded editor). Tracks upstream issue #91.
+        With<GizmoCamera>,
+    >,
     mut transparent_render_phases: ResMut<ViewSortedRenderPhases<Transparent3d>>,
 ) {
     let draw_function = draw_functions.read().get_id::<DrawGizmo>().unwrap();
