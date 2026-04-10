@@ -42,6 +42,9 @@ This branch (`stratum/main`) carries patches on top of upstream `0.9.0`:
 - **v0.9.0-stratum.1** — `GizmoCamera` render filter: `queue_transform_gizmos` now
   only renders into cameras with the `GizmoCamera` marker, preventing gizmo draws
   from leaking into unrelated views (upstream #91).
+- **v0.9.0-stratum.2** — Message cursor drain: replace `.read().len()` with
+  `.read().count()` in `update_gizmos` so `GizmoDragStarted`/`GizmoDragging`
+  messages are properly consumed and the gizmo deactivates on mouse release.
 
 ## License
 
