@@ -35,6 +35,14 @@ The gizmo exposes mathematical types as [mint](https://github.com/kvark/mint) ty
 such as [nalgebra](https://github.com/dimforge/nalgebra), [glam](https://github.com/bitshifter/glam-rs)
 and [cgmath](https://github.com/rustgd/cgmath). You may need to enable a `mint` feature, depending on the math library.
 
+## Stratum fork
+
+This branch (`stratum/main`) carries patches on top of upstream `0.9.0`:
+
+- **v0.9.0-stratum.1** — `GizmoCamera` render filter: `queue_transform_gizmos` now
+  only renders into cameras with the `GizmoCamera` marker, preventing gizmo draws
+  from leaking into unrelated views (upstream #91).
+
 ## License
 
 This crate is dual licensed under MIT and Apache 2.0.
